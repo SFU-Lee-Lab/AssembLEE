@@ -5,7 +5,7 @@ process DNAAPLER {
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/dnaapler:1.4.0--pyhdfd78af_0':
-        'quay.io/repository/biocontainers/dnaapler:1.4.0--pyhdfd78af_0' }"
+        'quay.io/biocontainers/dnaapler:1.4.0--pyhdfd78af_0' }"
 
     input:
     // assembly should be gfa
