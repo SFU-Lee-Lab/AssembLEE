@@ -1,5 +1,5 @@
 
-# ONT-GENOMICS: Bacterial genome assembly workflow for ONT data
+# AssembLEE: Bacterial genome assembly workflow for ONT data
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.0.3-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.0.3)
@@ -39,7 +39,7 @@ Now, you can run the pipeline using:
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run SFU-Lee-Lab/ont-genomics \
+nextflow run SFU-Lee-Lab/AssembLEE \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --out_dir <out_dir>
