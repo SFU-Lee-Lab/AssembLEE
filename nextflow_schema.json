@@ -39,6 +39,7 @@
             "properties": {
                 "qc": {
                     "type": "boolean",
+                    "default": true,
                     "description": "Perform quality check on genome assemblies"
                 },
                 "centrifuger_db": {
@@ -91,6 +92,7 @@
             "properties": {
                 "annot": {
                     "type": "boolean",
+                    "default": true,
                     "description": "Annotate genome assemblies"
                 },
                 "bakta_db": {
