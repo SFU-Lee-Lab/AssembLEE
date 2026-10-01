@@ -13,7 +13,8 @@ process GUNC_RUN {
 
     output:
     tuple val(meta), path("*maxCSS_level.tsv")                , emit: maxcss_level_tsv
-    tuple val(meta), path("*all_levels.tsv")  , optional: true, emit: all_levels_tsv
+    tuple val(meta), path("*all_levels.tsv")                  , optional: true, emit: all_levels_tsv
+    tuple val(meta), path("*contig_assignments.tsv")          , optional: true, emit: assembly_contig_assignments_tsv
     tuple val("${task.process}"), val('gunc'), emit: versions_gunc
 
     when:
@@ -30,6 +31,7 @@ process GUNC_RUN {
         --threads ${task.cpus} \\
         ${args}
     mv gunc_output/*all_levels.tsv .
+    mv gunc_output/*contig_assignments.tsv .
     """
 
     stub:
