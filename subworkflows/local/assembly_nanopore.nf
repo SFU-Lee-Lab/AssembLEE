@@ -77,21 +77,21 @@ workflow ASSEMBLY_NANOPORE {
         RAVEN(ch_subsampled_reads)
 
         // MINIASM assembly on subsampled reads
-        MINIMAP2_ALIGN_PAF(
-            ch_subsampled_reads,
-            [ [], [] ],
-            false,
-            false,
-            false,
-            false
-        )
+        // MINIMAP2_ALIGN_PAF(
+        //     ch_subsampled_reads,
+        //     [ [], [] ],
+        //     false,
+        //     false,
+        //     false,
+        //     false
+        // )
 
-        ch_miniasm_input = ch_subsampled_reads
-            .join(MINIMAP2_ALIGN_PAF.out.paf, by:0)
-        MINIASM(ch_miniasm_input)
+        // ch_miniasm_input = ch_subsampled_reads
+        //     .join(MINIMAP2_ALIGN_PAF.out.paf, by:0)
+        // MINIASM(ch_miniasm_input)
         
         // Polish miniasm assembly with minipolish
-        ch_minipolish_input = ch_subsampled_reads.join(MINIASM.out.gfa, by:0)
+        // ch_minipolish_input = ch_subsampled_reads.join(MINIASM.out.gfa, by:0)
         // MINIPOLISH(ch_minipolish_input)
         //ANY2FASTA_MINIPOLISH(MINIPOLISH.out.assembly)
 

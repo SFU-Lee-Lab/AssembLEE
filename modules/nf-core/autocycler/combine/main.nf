@@ -11,9 +11,9 @@ process AUTOCYCLER_COMBINE {
     tuple val(meta), path(clusters)
 
     output:
-    tuple val(meta), path("combine/${prefix}/consensus_assembly.fasta"), emit: fasta
-    tuple val(meta), path("combine/${prefix}/consensus_assembly.gfa"),   emit: gfa
-    tuple val(meta), path("combine/${prefix}/consensus_assembly.yaml"),  emit: stats
+    tuple val(meta), path("consensus_assembly.fasta"), emit: fasta
+    tuple val(meta), path("consensus_assembly.gfa"),   emit: gfa
+    tuple val(meta), path("consensus_assembly.yaml"),  emit: stats
     tuple val("${task.process}"), val("autocycler"), emit: versions_autocycler
 
     when:
@@ -29,15 +29,14 @@ process AUTOCYCLER_COMBINE {
         -a combine
 
     mkdir combine/$prefix
-    mv combine/consensus_assembly.fasta combine/${prefix}/consensus_assembly.fasta
-    mv combine/consensus_assembly.gfa combine/${prefix}/consensus_assembly.gfa
-    mv combine/consensus_assembly.yaml combine/${prefix}/consensus_assembly.yaml
+    mv combine/consensus_assembly.fasta consensus_assembly.fasta
+    mv combine/consensus_assembly.gfa consensus_assembly.gfa
+    mv combine/consensus_assembly.yaml consensus_assembly.yaml
     """
 
     stub:
     prefix   = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p combine/$prefix
-    touch combine/${prefix}/consensus_assembly.{fasta,gfa,yaml}
+    touch consensus_assembly.{fasta,gfa,yaml}
     """
 }
