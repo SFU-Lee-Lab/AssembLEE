@@ -74,7 +74,7 @@
                 },
                 "min_asm_cov": {
                     "type": "integer",
-                    "default": 50,
+                    "default": 20,
                     "description": "Maximum contig depth of coverage"
                 },
                 "medaka_model": {
