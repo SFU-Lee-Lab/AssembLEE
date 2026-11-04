@@ -49,32 +49,32 @@ workflow ASSEMBLY_NANOPORE {
                 tuple(meta, reads)
             }
         
-        ch_gsize = QUAST.out.tsv.map { meta, tsv ->
-                def gsize = tsv.readLines().find {
-                    it.startsWith('Total length (>= 0 bp)') 
-                }.split('\t')[1].toDouble()
+        // ch_gsize = QUAST.out.tsv.map { meta, tsv ->
+        //         def gsize = tsv.readLines().find {
+        //             it.startsWith('Total length (>= 0 bp)') 
+        //         }.split('\t')[1].toDouble()
                 
-                return tuple(meta, gsize)
-            }
+        //         return tuple(meta, gsize)
+        //     }
 
-        ch_subsample_input = ch_passed_reads.join(ch_gsize, by:0)
-            .map { meta, reads, gsize -> 
-                tuple(meta, reads, gsize)
-            }
+        // ch_subsample_input = ch_passed_reads.join(ch_gsize, by:0)
+        //     .map { meta, reads, gsize -> 
+        //         tuple(meta, reads, gsize)
+        //     }
 
         // subsample reads from passed samples
-        AUTOCYCLER_SUBSAMPLE(ch_subsample_input)
-        ch_subsampled_reads = AUTOCYCLER_SUBSAMPLE.out.subsampled_reads
-            .transpose()
-            .map { meta, reads ->
-                [ [id:meta.id, subsample:reads.getSimpleName()], reads]
-            }
+        // AUTOCYCLER_SUBSAMPLE(ch_subsample_input)
+        // ch_subsampled_reads = AUTOCYCLER_SUBSAMPLE.out.subsampled_reads
+        //     .transpose()
+        //     .map { meta, reads ->
+        //         [ [id:meta.id, subsample:reads.getSimpleName()], reads]
+        //     }
 
         // FLYE assembly on subsampled reads
-        FLYE_SUBSAMPLE(ch_subsampled_reads, ch_FLYE_mode)
+        FLYE_SUBSAMPLE(ch_passed_reads, ch_FLYE_mode)
 
         // RAVEN assembly on subsampled reads
-        RAVEN(ch_subsampled_reads)
+        RAVEN(ch_passed_reads)
 
         // MINIASM assembly on subsampled reads
         // MINIMAP2_ALIGN_PAF(
