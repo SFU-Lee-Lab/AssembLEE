@@ -1,5 +1,0 @@
-source(file.path(src_dir, "src/reactable-helper.R"))
-source(file.path(src_dir, "src/samnsero_annot_rtbl.R"))
-if (exists("amr_data")) amr_tbl <- amr_reactable(amr_data)
-if (exists("vf_data")) vf_tbl <- vf_reactable(vf_data)
-if (exists("plasmid_data")) plasmid_tbl <- plasmid_reactable(plasmid_data)
