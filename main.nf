@@ -11,7 +11,7 @@ WorkflowMain.initialise(workflow, params, log)
 include { NANOPORE } from './workflow/nanopore.nf'
 include { POST_ASM_PROCESS } from './workflow/post_asm_process.nf'
 // include { taxonkit_name2taxid } from './modules/local/taxonkit/name2taxid.nf'
-include { rename_FASTA } from './modules/local/rename_FASTA/main.nf'
+// include { rename_FASTA } from './modules/local/rename_FASTA/main.nf'
 include { SEQFU_SHRED } from './modules/local/seqfu/shred/main.nf'
 include { TAX_CLASS } from './subworkflows/local/tax_class.nf'
 
@@ -82,7 +82,7 @@ workflow {
     //     NANOPORE.out.reads,
     //     NANOPORE.out.species_id
     // )
-    
+
     // process genome assembly directly
     SEQFU_SHRED(data.asm)
     TAX_CLASS(SEQFU_SHRED.out.shred)
