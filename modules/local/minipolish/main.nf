@@ -5,7 +5,7 @@ process MINIPOLISH {
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/minipolish:0.2.1--pyhdfd78af_0':
-        'quay.io/repository/biocontainers/minipolish:0.2.1--pyhdfd78af_0' }"
+        'quay.io/biocontainers/minipolish:0.2.1--pyhdfd78af_0' }"
 
     input:
     // reads should be concatenated into single fasta or fastq
