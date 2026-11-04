@@ -2,7 +2,7 @@
 include { FLYE; FLYE as FLYE_SUBSAMPLE } from '../../modules/nf-core/flye/main.nf'
 include { MEDAKA } from '../../modules/nf-core/medaka/main.nf'
 include { QUAST } from '../../modules/nf-core/quast/main.nf'
-include { RAVEN } from '../../modules/nf-core/raven/main.nf'
+include { RAVEN; RAVEN as RAVEN_SUBSAMPLE } from '../../modules/nf-core/raven/main.nf'
 include { AUTOCYCLER_SUBSAMPLE } from '../../modules/nf-core/autocycler/subsample/main.nf'
 include { MINIASM } from '../../modules/nf-core/miniasm/main.nf'
 include { MINIMAP2_ALIGN as MINIMAP2_ALIGN_PAF } from '../../modules/nf-core/minimap2/align/main.nf'
@@ -10,6 +10,7 @@ include { MINIPOLISH } from '../../modules/local/minipolish/main.nf'
 include { ANY2FASTA; ANY2FASTA as ANY2FASTA_MINIPOLISH } from '../../modules/nf-core/any2fasta/main.nf'
 include { FASTA_CONSENSUS_AUTOCYCLER } from '../../subworkflows/nf-core/fasta_consensus_autocycler/main.nf'
 include { DNAAPLER } from '../../modules/local/dnaapler/main.nf'
+include { GUNZIP } from '../../modules/nf-core/gunzip/main.nf'
 
 workflow ASSEMBLY_NANOPORE {
     take: reads
@@ -71,34 +72,35 @@ workflow ASSEMBLY_NANOPORE {
         //     }
 
         // FLYE assembly on subsampled reads
-        FLYE_SUBSAMPLE(ch_passed_reads, ch_FLYE_mode)
+        // FLYE_SUBSAMPLE(ch_passed_reads, ch_FLYE_mode)
 
         // RAVEN assembly on subsampled reads
         RAVEN(ch_passed_reads)
 
         // MINIASM assembly on subsampled reads
-        // MINIMAP2_ALIGN_PAF(
-        //     ch_subsampled_reads,
-        //     [ [], [] ],
-        //     false,
-        //     false,
-        //     false,
-        //     false
-        // )
+        MINIMAP2_ALIGN_PAF(
+            ch_passed_reads,
+            [ [], [] ],
+            false,
+            false,
+            false,
+            false
+        )
 
-        // ch_miniasm_input = ch_subsampled_reads
-        //     .join(MINIMAP2_ALIGN_PAF.out.paf, by:0)
-        // MINIASM(ch_miniasm_input)
+        ch_miniasm_input = ch_passed_reads
+            .join(MINIMAP2_ALIGN_PAF.out.paf, by:0)
+        MINIASM(ch_miniasm_input)
+        GUNZIP(MINIASM.out.gfa)
         
         // Polish miniasm assembly with minipolish
-        // ch_minipolish_input = ch_subsampled_reads.join(MINIASM.out.gfa, by:0)
-        // MINIPOLISH(ch_minipolish_input)
-        //ANY2FASTA_MINIPOLISH(MINIPOLISH.out.assembly)
+        ch_minipolish_input = ch_passed_reads.join(GUNZIP.out.gunzip, by:0)
+        MINIPOLISH(ch_minipolish_input)
+        ANY2FASTA_MINIPOLISH(MINIPOLISH.out.assembly)
 
-        ch_autocycler_input = FLYE_SUBSAMPLE.out.fasta
+        ch_autocycler_input = FLYE.out.fasta
             .concat(
-                RAVEN.out.fasta//,
-                //ANY2FASTA_MINIPOLISH.out.fasta
+                RAVEN.out.fasta,
+                ANY2FASTA_MINIPOLISH.out.fasta
             )
             .map { meta, fasta ->
                 tuple([id:meta.id, single_end: true], fasta)
