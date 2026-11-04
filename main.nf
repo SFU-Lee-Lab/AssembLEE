@@ -11,7 +11,9 @@ WorkflowMain.initialise(workflow, params, log)
 include { NANOPORE } from './workflow/nanopore.nf'
 include { POST_ASM_PROCESS } from './workflow/post_asm_process.nf'
 // include { taxonkit_name2taxid } from './modules/local/taxonkit/name2taxid.nf'
-include { rename_FASTA } from './modules/local/rename_FASTA/rename_FASTA.nf'
+include { rename_FASTA } from './modules/local/rename_FASTA/main.nf'
+include { SEQFU_SHRED } from './modules/local/seqfu/shred/main.nf'
+include { TAX_CLASS } from './subworkflows/local/tax_class.nf'
 
 // define main workflow
 workflow {
@@ -30,11 +32,11 @@ workflow {
             }
             .branch{ id,path ->
                 reads: file(path).isDirectory()
-                asm: ( ! file(path).isDirectory() ) & ['.fa', '.fasta', '.fna'].any { path.endsWith(it) }
+                asm: ( ! file(path).isDirectory() ) & ['.fa', '.fasta', '.fna', '.fa.gz', '.fasta.gz', '.fna.gz'].any { path.endsWith(it) }
             }
         
         // rename FASTA files to avoid file name collision
-        rename_FASTA(data.asm)
+        // rename_FASTA(data.asm)
 
     } else if (params.input_dir) {
 
@@ -75,12 +77,21 @@ workflow {
 
     // start analysis
     NANOPORE(data.reads)
-    POST_ASM_PROCESS(
-        NANOPORE.out.assembly, 
-        NANOPORE.out.reads,
-        NANOPORE.out.species_id
-    )
+    // POST_ASM_PROCESS(
+    //     NANOPORE.out.assembly, 
+    //     NANOPORE.out.reads,
+    //     NANOPORE.out.species_id
+    // )
+    
     // process genome assembly directly
-    // post_asm_process_asm(rename_FASTA.out, data.asm.map { id,path -> [id, [] ] }, taxid, true)
+    SEQFU_SHRED(data.asm)
+    TAX_CLASS(SEQFU_SHRED.out.shred)
+
+    // run post-assembly processes
+    POST_ASM_PROCESS(
+        data.asm.mix(NANOPORE.out.assembly), 
+        Channel.empty().mix(NANOPORE.out.reads),
+        TAX_CLASS.out.species_id.mix(NANOPORE.out.species_id)
+    )
     
 }
