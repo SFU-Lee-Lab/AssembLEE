@@ -98,10 +98,8 @@ workflow ASSEMBLY_NANOPORE {
         ANY2FASTA_MINIPOLISH(MINIPOLISH.out.assembly)
 
         ch_autocycler_input = FLYE.out.fasta
-            .concat(
-                RAVEN.out.fasta,
-                ANY2FASTA_MINIPOLISH.out.fasta
-            )
+            .mix(RAVEN.out.fasta)
+            .mix(ANY2FASTA_MINIPOLISH.out.fasta)
             .map { meta, fasta ->
                 tuple([id:meta.id, single_end: true], fasta)
             }
