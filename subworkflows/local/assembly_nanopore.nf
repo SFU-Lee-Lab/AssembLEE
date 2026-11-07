@@ -109,7 +109,7 @@ workflow ASSEMBLY_NANOPORE {
                 fasta.countFasta() > 0
 
             }
-            .groupTuple(by:0)
+            .groupTuple(by:0, size: 3)
 
 
         FASTA_CONSENSUS_AUTOCYCLER(
