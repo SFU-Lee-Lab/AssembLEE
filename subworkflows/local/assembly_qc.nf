@@ -15,12 +15,13 @@ workflow ASSEMBLY_QC {
         
         // QUAST on polished assembly
         ch_quast_input = assembly.join(reads, remainder: true)
-        ch_quast_input
-        .branch {
-            with_reads: it[-1] != null
-            without_reads: true
-        }
-        .set { ch_quast_branch }
+        ch_quast_branch = assembly
+            .join(reads, remainder: true)
+            .branch { meta, asm, rds ->
+                with_reads:    asm != null && rds != null
+                without_reads: asm != null
+                no_assembly:   true                         // reads-only rows: nothing to QC
+            }
         
         QUAST(
             ch_quast_branch.with_reads,
